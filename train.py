@@ -106,8 +106,8 @@ def evaluate(env, agent, video, num_episodes, L, step, args):
         
         mean_ep_reward = np.mean(all_ep_rewards)
         best_ep_reward = np.max(all_ep_rewards)
-        L.log('eval/' + prefix + 'mean_episode_reward', mean_ep_reward, step)
-        L.log('eval/' + prefix + 'best_episode_reward', best_ep_reward, step)
+        L.log('eval/' + prefix + '_mean_episode_reward', mean_ep_reward, step)
+        L.log('eval/' + prefix + '_best_episode_reward', best_ep_reward, step)
 
     run_eval_loop(sample_stochastically=True)
     run_eval_loop(sample_stochastically=False)

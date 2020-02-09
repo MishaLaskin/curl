@@ -24,7 +24,7 @@ and go to `localhost:6006` in your browser. If you're running headlessly, try po
 
 The console output is also available in a form:
 ```
-| train | E: 1 | S: 1000 | D: 0.8 s | R: 0.0000 | BR: 0.0000 | ALOSS: 0.0000 | CLOSS: 0.0000 | RLOSS: 0.0000
+| train | E: 1 | S: 1000 | D: 0.8 s | R: 0.0000 | BR: 0.0000 | A_LOSS: 0.0000 | CR_LOSS: 0.0000 | CU_LOSS: 0.0000
 ```
 a training entry decodes as:
 ```

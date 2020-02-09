@@ -82,7 +82,7 @@ def evaluate(env, agent, video, num_episodes, L, step, args):
     all_ep_rewards = []
 
     def run_eval_loop(sample_stochastically=True):
-        prefix = 'stochastic' if sample_stochastically else ''
+        prefix = 'stochastic_' if sample_stochastically else ''
         for i in range(num_episodes):
             obs = env.reset()
             video.init(enabled=(i == 0))
@@ -101,13 +101,13 @@ def evaluate(env, agent, video, num_episodes, L, step, args):
                 episode_reward += reward
 
             video.save('%d.mp4' % step)
-            L.log('eval/' + prefix + '_episode_reward', episode_reward, step)
+            L.log('eval/' + prefix + 'episode_reward', episode_reward, step)
             all_ep_rewards.append(episode_reward)
         
         mean_ep_reward = np.mean(all_ep_rewards)
         best_ep_reward = np.max(all_ep_rewards)
-        L.log('eval/' + prefix + '_mean_episode_reward', mean_ep_reward, step)
-        L.log('eval/' + prefix + '_best_episode_reward', best_ep_reward, step)
+        L.log('eval/' + prefix + 'mean_episode_reward', mean_ep_reward, step)
+        L.log('eval/' + prefix + 'best_episode_reward', best_ep_reward, step)
 
     run_eval_loop(sample_stochastically=True)
     run_eval_loop(sample_stochastically=False)

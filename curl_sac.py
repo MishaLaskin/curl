@@ -442,7 +442,7 @@ class CurlSacAgent(object):
         self.encoder_optimizer.step()
         self.cpc_optimizer.step()
         if step % self.log_interval == 0:
-            L.log('train_cpc/cpc_loss', loss, step)
+            L.log('train_curl/curl_loss', loss, step)
 
 
     def update(self, replay_buffer, L, step):

@@ -1,3 +1,4 @@
 tmp/
-notebooks
-__pycache__
+notebooks/
+__pycache__/
+.ipynb_checkpoints/

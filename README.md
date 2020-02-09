@@ -14,19 +14,20 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
     --seed -1 --critic_lr 1e-3 --actor_lr 1e-3 --eval_freq 10000 --batch_size 128 --num_train_steps 1000000 
 ```
 
-This will store data related to the run in the specified `working_dir`. To enable model or video saving, use the `--save_model` or `--save_video` flags. For all available flags, inspect `train.py`. To visualize progress with tensorboard run:
+In your console, you should see printouts that look like:
 
 ```
-tensorboard --logdir log --port 6006
+| train | E: 221 | S: 28000 | D: 18.1 s | R: 785.2634 | BR: 3.8815 | ALOSS: -305.7328 | CLOSS: 190.9854 | RLOSS: 0.0000
+| train | E: 225 | S: 28500 | D: 18.6 s | R: 832.4937 | BR: 3.9644 | ALOSS: -308.7789 | CLOSS: 126.0638 | RLOSS: 0.0000
+| train | E: 229 | S: 29000 | D: 18.8 s | R: 683.6702 | BR: 3.7384 | ALOSS: -311.3941 | CLOSS: 140.2573 | RLOSS: 0.0000
+| train | E: 233 | S: 29500 | D: 19.6 s | R: 838.0947 | BR: 3.7254 | ALOSS: -316.9415 | CLOSS: 136.5304 | RLOSS: 0.0000
+| train | E: 237 | S: 30000 | D: 0.0 s | R: 839.8980 | BR: 4.1565 | ALOSS: -331.8797 | CLOSS: 150.7478 | RLOSS: 0.0000
 ```
 
-and go to `localhost:6006` in your browser. If you're running headlessly, try port forwarding with ssh.
+The maximum score for cartpole swing up is around 845 pts. Notice how CURL solves visual cartpole in 30k steps! This takes about and hour of training depending on your GPU. For reference, the state-state-of-the-art end-to-end method D4PG takes 50,000,000 timesteps to solve the same problem. CURL is ~1000x more efficient!
 
-The console output is also available in a form:
-```
-| train | E: 1 | S: 1000 | D: 0.8 s | R: 0.0000 | BR: 0.0000 | A_LOSS: 0.0000 | CR_LOSS: 0.0000 | CU_LOSS: 0.0000
-```
-a training entry decodes as:
+The above output decodes as:
+
 ```
 train - training episode
 E - total number of episodes 
@@ -38,8 +39,12 @@ A_LOSS - average loss of actor
 CR_LOSS - average loss of critic
 CU_LOSS - average loss of the CURL encoder
 ```
-while an evaluation entry:
+
+All data related to the run is stored in the specified `working_dir`. To enable model or video saving, use the `--save_model` or `--save_video` flags. For all available flags, inspect `train.py`. To visualize progress with tensorboard run:
+
 ```
-| eval | S: 0 | ER: 21.1676
+tensorboard --logdir log --port 6006
 ```
-which just tells the expected reward `ER` evaluating current policy after `S` steps. Note that `ER` is average evaluation performance over `num_eval_episodes` episodes (usually 10).
+
+and go to `localhost:6006` in your browser. If you're running headlessly, try port forwarding with ssh.
+

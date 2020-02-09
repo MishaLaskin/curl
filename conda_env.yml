@@ -1,4 +1,4 @@
-name: pytorch_sac_ae
+name: curl
 channels:
   - defaults
 dependencies:

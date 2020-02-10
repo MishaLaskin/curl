@@ -1,0 +1,5 @@
+- gpu_ids=1,3
+- domain_name=cartpole
+- task_name=swingup
+- work_dir=/tmp/cartpole
+- init_steps=128

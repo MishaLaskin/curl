@@ -52,7 +52,9 @@ def module_hash(module):
 def make_dir(dir_path):
     try:
         os.mkdir(dir_path)
-    except OSError:
+    except OSError as err:
+        print('failed to create dir:',dir_path)
+        print('Error:',err)
         pass
     return dir_path
 

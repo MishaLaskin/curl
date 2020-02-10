@@ -148,8 +148,7 @@ def make_agent(obs_shape, action_shape, args, device):
     else:
         assert 'agent is not supported: %s' % args.agent
 
-def main():
-    args = parse_args()
+def main(args,gpu_id=0):
     if args.seed == -1: 
         args.__dict__["seed"] = np.random.randint(1,1000)
     utils.set_seed_everywhere(args.seed)
@@ -178,9 +177,9 @@ def main():
     video = VideoRecorder(video_dir if args.save_video else None)
 
     with open(os.path.join(args.work_dir, 'args.json'), 'w') as f:
-        json.dump(vars(args), f, sort_keys=True, indent=4)
+        json.dump(dict(args), f, sort_keys=True, indent=4)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:' + str(gpu_id) if torch.cuda.is_available() else 'cpu')
 
     action_shape = env.action_space.shape
 
@@ -268,6 +267,5 @@ def main():
 
 
 if __name__ == '__main__':
-    torch.multiprocessing.set_start_method('spawn')
-
-    main()
+    args = parse_args()
+    main(args)

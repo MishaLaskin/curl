@@ -10,6 +10,7 @@ dependencies:
   - pyparsing
   - pip:
     - termcolor
+    - hydra-core
     - git+git://github.com/deepmind/dm_control.git
     - git+git://github.com/1nadequacy/dmc2gym.git
     - tb-nightly

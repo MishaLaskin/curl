@@ -1,0 +1,4 @@
+db:
+  driver: postgres
+  user: misha
+  pass: secret

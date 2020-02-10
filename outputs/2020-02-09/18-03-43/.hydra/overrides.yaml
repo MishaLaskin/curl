@@ -1,3 +1,0 @@
-- gpu_ids=1-2
-- domain_name=cartpole
-- task_name=swingup

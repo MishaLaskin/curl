@@ -1,6 +1,0 @@
-[2020-02-09 18:31:23,957][absl][INFO] - MUJOCO_GL=osmesa, attempting to import specified OpenGL backend.
-[2020-02-09 18:31:23,963][absl][INFO] - MUJOCO_GL=osmesa, attempting to import specified OpenGL backend.
-[2020-02-09 18:31:23,987][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
-[2020-02-09 18:31:23,990][OpenGL.acceleratesupport][INFO] - No OpenGL_accelerate module loaded: No module named 'OpenGL_accelerate'
-[2020-02-09 18:31:24,308][absl][INFO] - MuJoCo library version is: 200
-[2020-02-09 18:31:24,324][absl][INFO] - MuJoCo library version is: 200

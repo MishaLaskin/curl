@@ -151,7 +151,7 @@ def make_agent(obs_shape, action_shape, args, device):
 def main():
     args = parse_args()
     if args.seed == -1: 
-        args.__dict__["seed"] = np.random.randint(1,1000)
+        args.__dict__["seed"] = np.random.randint(1,1000000)
     utils.set_seed_everywhere(args.seed)
     env = dmc2gym.make(
         domain_name=args.domain_name,
@@ -169,6 +169,13 @@ def main():
     # stack several consecutive frames together
     if args.encoder_type == 'pixel':
         env = utils.FrameStack(env, k=args.frame_stack)
+    
+    # make directory
+    ts = time.gmtime() 
+    ts = time.strftime("%m-%d", ts)    
+    env_name = args.domain_name + '-' + args.task_name
+    exp_name = env_name + '-' + ts + '-im' + str(args.image_size) +'-b'  + str(args.batch_size) + '-s' + str(args.seed)  
+    args.work_dir = args.work_dir + '/'  + exp_name
 
     utils.make_dir(args.work_dir)
     video_dir = utils.make_dir(os.path.join(args.work_dir, 'video'))

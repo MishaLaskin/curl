@@ -3,3 +3,4 @@ notebooks/
 __pycache__/
 .ipynb_checkpoints/
 scripts/run_*.sh
+test*

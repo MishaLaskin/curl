@@ -116,24 +116,14 @@ class ReplayBuffer(Dataset):
         self.idx = (self.idx + 1) % self.capacity
         self.full = self.full or self.idx == 0
 
-    def sample(self,data_aug=False):
+    def sample_proprio(self):
         
-        start = time.time()
         idxs = np.random.randint(
             0, self.capacity if self.full else self.idx, size=self.batch_size
         )
         
         obses = self.obses[idxs]
         next_obses = self.next_obses[idxs]
-        
-        """
-        Try to do a batch crop and see result
-        """
-       
-        # crop batch
-        obses = fast_random_crop(obses, self.image_size)
-        next_obses = fast_random_crop(next_obses, self.image_size)
-        
 
         obses = torch.as_tensor(obses, device=self.device).float()
         actions = torch.as_tensor(self.actions[idxs], device=self.device)
@@ -142,8 +132,6 @@ class ReplayBuffer(Dataset):
             next_obses, device=self.device
         ).float()
         not_dones = torch.as_tensor(self.not_dones[idxs], device=self.device)
-        #obses = random_grayscale_stack(obses,self.device,p=0.2)
-        #next_obses = random_grayscale_stack(next_obses,self.device,p=0.2)
         return obses, actions, rewards, next_obses, not_dones
 
     def sample_cpc(self):
@@ -153,41 +141,15 @@ class ReplayBuffer(Dataset):
             0, self.capacity if self.full else self.idx, size=self.batch_size
         )
       
-
         obses = self.obses[idxs]
         next_obses = self.next_obses[idxs]
         pos = obses.copy()
 
-        #obses = self.seq(images=np.transpose(obses, (0, 2, 3, 1)))
-        #pos = self.seq(images=np.transpose(pos, (0, 2, 3, 1)))
-        #neg = self.seq(images=np.transpose(neg, (0, 2, 3, 1)))
-
-        #next_obses = self.seq(images=np.transpose(next_obses, (0, 2, 3, 1)))
-
-        #obses = np.transpose(obses, (0, 3, 1, 2))
-        #next_obses = np.transpose(next_obses, (0, 3, 1, 2))
-        #pos = np.transpose(pos, (0, 3, 1, 2))
-        #neg = np.transpose(neg, (0, 3, 1, 2))
-
-        # random crop
-        # time flip
-        #time_flip_obses = obses[:, ::-1, ...].copy()
-        #time_pos = time_flip_obses.copy()
-
         obses = fast_random_crop(obses, self.image_size)
         next_obses = fast_random_crop(next_obses, self.image_size)
         pos = fast_random_crop(pos, self.image_size)
-        #time_flip_obses = fast_random_crop(time_flip_obses, 84)
-        #time_pos = fast_random_crop(time_pos, 84)
-
-        # random flip
-        #obses = random_flip(obses,.2)
-        #next_obses = random_flip(next_obses, .2)
-        #pos = random_flip(pos, .2)
-
+    
         obses = torch.as_tensor(obses, device=self.device).float()
-        #time_flip_obses = torch.as_tensor(time_flip_obses, device=self.device).float()
-        #time_pos = torch.as_tensor(time_pos, device=self.device).float()
         next_obses = torch.as_tensor(
             next_obses, device=self.device
         ).float()
@@ -196,15 +158,6 @@ class ReplayBuffer(Dataset):
         not_dones = torch.as_tensor(self.not_dones[idxs], device=self.device)
 
         pos = torch.as_tensor(pos, device=self.device).float()
-        #obses = random_grayscale_stack(obses,self.device,p=.2)
-        #next_obses = random_grayscale_stack(obses,self.device,p=.2)
-        #pos = random_grayscale_stack(obses,self.device,p=.2)
-        # repeat negatives to make a batch of N
-        # most likely source of mistake is these negatives
-        # currently being stacked [[1,2,3],[1,2,3],...]
-        # but we may wany [[1,1,1],[2,2,2],[3,3,3]...]
-        #neg = neg.repeat(64,1,1,1)
-        #cpc_kwargs = dict(obs_anchor=obses,obs_pos=pos,time_anchor=time_flip_obses, time_pos=time_pos)
         cpc_kwargs = dict(obs_anchor=obses, obs_pos=pos,
                           time_anchor=None, time_pos=None)
 

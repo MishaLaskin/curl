@@ -91,7 +91,8 @@ def evaluate(env, agent, video, num_episodes, L, step, args):
             episode_reward = 0
             while not done:
                 # center crop image
-                obs = utils.center_crop_image(obs,args.image_size)
+                if args.encoder_type == 'pixel':
+                    obs = utils.center_crop_image(obs,args.image_size)
                 with utils.eval_mode(agent):
                     if sample_stochastically:
                         action = agent.sample_action(obs)
@@ -176,7 +177,8 @@ def main():
     ts = time.gmtime() 
     ts = time.strftime("%m-%d", ts)    
     env_name = args.domain_name + '-' + args.task_name
-    exp_name = env_name + '-' + ts + '-im' + str(args.image_size) +'-b'  + str(args.batch_size) + '-s' + str(args.seed)  
+    exp_name = env_name + '-' + ts + '-im' + str(args.image_size) +'-b'  \
+    + str(args.batch_size) + '-s' + str(args.seed)  + '-' + args.encoder_type
     args.work_dir = args.work_dir + '/'  + exp_name
 
     utils.make_dir(args.work_dir)

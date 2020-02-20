@@ -6,7 +6,6 @@ import os
 from collections import deque
 import random
 from torch.utils.data import Dataset, DataLoader
-from torchvision import transforms
 import time
 from skimage.util.shape import view_as_windows
 

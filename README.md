@@ -1,5 +1,13 @@
 # CURL: Contrastive Unsupervised Representation Learning for Sample-Efficient Reinforcement Learning
 
+## Installation 
+
+All of the dependencies are in the `conda_env.yml` file. They can be installed manually or with the following command:
+
+```
+conda env create -f conda_env.yml
+```
+
 ## Instructions
 To train a CURL agent on the `cartpole swingup` task from image-based observations run `bash script/run.sh` from the root of this directory. The `run.sh` file contains the following command, which you can modify to try different environments / hyperparamters.
 ```

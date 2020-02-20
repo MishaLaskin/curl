@@ -8,6 +8,7 @@ dependencies:
   - cudatoolkit=9.2
   - absl-py
   - pyparsing
+  - pillow=6.1
   - pip:
     - termcolor
     - git+git://github.com/deepmind/dm_control.git
@@ -15,3 +16,5 @@ dependencies:
     - tb-nightly
     - imageio
     - imageio-ffmpeg
+    - torchvision
+    - scikit-image

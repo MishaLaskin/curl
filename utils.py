@@ -8,7 +8,6 @@ import random
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
 import time
-from imgaug import augmenters as iaa
 from skimage.util.shape import view_as_windows
 
 class eval_mode(object):
@@ -90,18 +89,6 @@ class ReplayBuffer(Dataset):
         self.last_save = 0
         self.full = False
 
-        self.seq = iaa.Sequential([
-            # crop images from each side by 0 to 16px (randomly chosen)
-            iaa.Crop(px=(0, 20)),
-            #iaa.Fliplr(0.5),
-            #   iaa.Affine(
-                #scale={"x": (0.8, 1.2), "y": (0.8, 1.2)},
-                #translate_percent={"x": (-0.2, 0.2), "y": (-0.2, 0.2)},
-                #rotate=(-20, 20),
-                #shear=(-8, 8)
-            #)
-           
-        ], random_order=True)
 
     
 

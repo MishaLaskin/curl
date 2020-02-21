@@ -230,7 +230,7 @@ def main():
             L.log('eval/episode', episode, step)
             evaluate(env, agent, video, args.num_eval_episodes, L, step,args)
             if args.save_model:
-                agent.save(model_dir, step)
+                agent.save_curl(model_dir, step)
             if args.save_buffer:
                 replay_buffer.save(buffer_dir)
 

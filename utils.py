@@ -203,6 +203,7 @@ class StateMask(gym.Wrapper):
     def __init__(self, env, pos_dim):
         gym.Wrapper.__init__(self, env)
         self.pos_dim = pos_dim
+        self._max_episode_steps = env._max_episode_steps
         self.observation_space = gym.spaces.Box(
             low=-np.inf,
             high=np.inf,

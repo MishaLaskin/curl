@@ -1,7 +1,7 @@
 CUDA_VISIBLE_DEVICES=5 python train.py \
     --domain_name cartpole \
     --task_name swingup \
-    --encoder_type pixel \
+    --encoder_type identity \
     --action_repeat 8 \
     --save_tb --pre_transform_image_size 100 --image_size 84 \
     --work_dir ./tmp/test \

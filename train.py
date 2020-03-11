@@ -172,7 +172,11 @@ def main():
     # stack several consecutive frames together
     if args.encoder_type == 'pixel':
         env = utils.FrameStack(env, k=args.frame_stack)
-    
+    else:
+        pos_dim = utils.get_pos_dim(args.domain_name,args.task_name)
+        env = utils.StateMask(env,pos_dim)
+       
+
     # make directory
     ts = time.gmtime() 
     ts = time.strftime("%m-%d", ts)    

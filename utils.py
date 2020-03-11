@@ -8,6 +8,7 @@ import random
 from torch.utils.data import Dataset, DataLoader
 import time
 from skimage.util.shape import view_as_windows
+from dm_control import suite 
 
 class eval_mode(object):
     def __init__(self, *models):
@@ -197,6 +198,44 @@ class ReplayBuffer(Dataset):
 
     def __len__(self):
         return self.capacity 
+
+class StateMask(gym.Wrapper):
+    def __init__(self, env, pos_dim):
+        gym.Wrapper.__init__(self, env)
+        self.pos_dim = pos_dim
+        self.observation_space = gym.spaces.Box(
+            low=-np.inf,
+            high=np.inf,
+            shape=(pos_dim,),
+            dtype=env.observation_space.dtype
+        )
+
+    def reset(self):
+        obs = self.env.reset()
+        return obs[:self.pos_dim]
+       
+    def step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        return obs[:self.pos_dim], reward, done, info
+
+def get_pos_dim(domain_name,task_name):
+    env = suite.load(domain_name,task_name)
+    ts = env.reset()
+    total_counts = 0
+    for k,v in ts.observation.items():
+        try: 
+            total_counts +=len(v)
+            if k == 'position' or k == 'orientations':
+                pos_counts = len(v)
+            #print(k,len(v))
+        except:
+            total_counts +=1
+            #print(k,1)
+            if k == 'position' or k == 'orientations':
+                pos_counts = 1
+            
+    return pos_counts
+
 
 class FrameStack(gym.Wrapper):
     def __init__(self, env, k):

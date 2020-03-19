@@ -5,3 +5,4 @@ __pycache__/
 scripts/run_*.sh
 test*
 *frame2state*
+data

@@ -17,7 +17,7 @@ from video import VideoRecorder
 
 from curl_sac import CurlSacAgent
 from torchvision import transforms
-
+from collections import deque
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -223,6 +223,12 @@ def main():
     episode, episode_reward, done = 0, 0, True
     start_time = time.time()
 
+    data_size = 20000
+    frame_stack = deque([],maxlen=3)
+    image_dataset = deque([],maxlen=data_size)
+    state_dataset = deque([],maxlen=data_size)
+    collect_steps = 50
+
     for step in range(args.num_train_steps):
         # evaluate agent periodically
 
@@ -244,6 +250,12 @@ def main():
                 L.log('train/episode_reward', episode_reward, step)
 
             obs = env.reset()
+            image = env.render(mode='rgb_array',camera_id=0,height=84,width=84)
+            image = np.transpose(image,(2,0,1))
+
+            for _ in range(3):
+                frame_stack.append(image)
+
             done = False
             episode_reward = 0
             episode_step = 0
@@ -265,6 +277,9 @@ def main():
                 agent.update(replay_buffer, L, step)
 
         next_obs, reward, done, _ = env.step(action)
+        image = env.render(mode='rgb_array',camera_id=0,height=84,width=84)
+        image = np.transpose(image,(2,0,1))
+        frame_stack.append(image)
 
         # allow infinit bootstrap
         done_bool = 0 if episode_step + 1 == env._max_episode_steps else float(
@@ -274,6 +289,18 @@ def main():
         #action = np.array([action], dtype="float32") 
         replay_buffer.add(obs, action, reward, next_obs, done_bool)
 
+        if step % collect_steps == 0:
+            
+            frames_to_add = np.concatenate(list(frame_stack), axis=0)
+          
+            image_dataset.append(frames_to_add)
+            state_dataset.append(next_obs)
+
+        if step % 10000 == 0:
+            dataset = dict(images=np.array(image_dataset),states=np.array(state_dataset))
+            np.save('./data/' + args.domain_name + '-' + args.task_name + '.npy',dataset)
+    
+            
         obs = next_obs
         episode_step += 1
 

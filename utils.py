@@ -131,9 +131,9 @@ class ReplayBuffer(Dataset):
         next_obses = self.next_obses[idxs]
         pos = obses.copy()
 
-        obses = fast_random_crop(obses, self.image_size)
-        next_obses = fast_random_crop(next_obses, self.image_size)
-        pos = fast_random_crop(pos, self.image_size)
+        obses = random_crop(obses, self.image_size)
+        next_obses = random_crop(next_obses, self.image_size)
+        pos = random_crop(pos, self.image_size)
     
         obses = torch.as_tensor(obses, device=self.device).float()
         next_obses = torch.as_tensor(
@@ -227,53 +227,8 @@ class FrameStack(gym.Wrapper):
         assert len(self._frames) == self._k
         return np.concatenate(list(self._frames), axis=0)
 
-"""
-Various transforms
-"""
 
-
-class RandomCrop(object):
-    """Crop randomly the image in a sample.
-
-    Args:
-        output_size (tuple or int): Desired output size. If int, square crop
-            is made.
-    """
-
-    def __init__(self, output_size):
-        assert isinstance(output_size, (int, tuple))
-        if isinstance(output_size, int):
-            self.output_size = (output_size, output_size)
-        else:
-            assert len(output_size) == 2
-            self.output_size = output_size
-
-    def __call__(self, image):
-
-        h, w = image.shape[1:]
-        new_h, new_w = self.output_size
-
-        top = np.random.randint(0, h - new_h)
-        left = np.random.randint(0, w - new_w)
-
-        image = image[:, top: top + new_h, left: left + new_w]
-
-        return image
-
-def random_crop(imgs,output_size):
-    h, w = imgs.shape[2:]
-    new_h, new_w = output_size, output_size
-
-    if h > new_h:
-        top = np.random.randint(0, h - new_h)
-        left = np.random.randint(0, w - new_w)
-
-        imgs = imgs[:,:, top: top + new_h, left: left + new_w]
-
-    return imgs
-
-
-def fast_random_crop(imgs, output_size):
+def random_crop(imgs, output_size):
     """
     Vectorized way to do random crop using sliding windows
     and picking out random ones
@@ -295,63 +250,6 @@ def fast_random_crop(imgs, output_size):
     cropped_imgs = windows[np.arange(n), w1, h1]
     return cropped_imgs
 
-
-def random_flip(imgs, prob=0.2):
-    B = imgs.shape[0]
-    N = int(prob*B)
-    flipped_imgs = imgs[..., ::-1].copy()
-    idxs = np.random.choice(B, size=(N,), replace=False)
-    imgs[idxs] = flipped_imgs[idxs]
-    return imgs
-
-def time_flip(imgs,device):
-
-    time_flipped_imgs = imgs[:,::-1, ...].copy()
-    all_imgs = np.concatenate((imgs, time_flipped_imgs), 0)
-
-    return all_imgs
-
-def grayscale(imgs,device):
-    # imgs: b x c x h x w
-    b, c, h, w = imgs.shape
-    frames = c // 3
-    
-    imgs = imgs.view([b,frames,3,h,w])
-    imgs = imgs[:, :, 0, ...] * 0.2989 + imgs[:, :, 1, ...] * 0.587 + imgs[:, :, 2, ...] * 0.114 
-    
-    imgs = imgs.type(torch.uint8).float()
-    # assert len(imgs.shape) == 3, imgs.shape
-    imgs = imgs[:, :, None, :, :]
-    imgs = imgs * torch.ones([1, 1, 3, 1, 1], dtype=imgs.dtype).float().to(device) # broadcast tiling
-    return imgs
-
-def random_grayscale(images,device,p=1.):
-    # images: [B, C, H, W]
-    gray_images = grayscale(images,device)
-    rnd = np.random.uniform(0., 1., size=(images.shape[0],))
-    mask = rnd <= p
-    mask = torch.from_numpy(mask)
-    frames = images.shape[1] // 3
-    images = images.view(*gray_images.shape)
-    mask = mask[:, None] * torch.ones([1, frames]).type(mask.dtype)
-    mask = mask.type(images.dtype).to(device)
-    mask = mask[:, :, None, None, None]
-    return mask * gray_images + (1 - mask) * images
-
-def random_grayscale_stack(stack,device,p=0.5):
-    # stack: B X C x H x W, C =  num_frames * 3. 
-    bs, channels, h, w = stack.shape
-    num_frames = channels // 3
-    #stack = stack.view([-1, 3, h, w])
-    stack = random_grayscale(stack, device,p=p)
-    stack = stack.view([bs, -1, h, w])
-    return stack
-
-def random_rotate(imgs):
-    k = np.random.randint(4)
-    imgs = np.ascontiguousarray(np.rot90(imgs,k=k,axes=(-2,-1)))
-    return imgs
-
 def center_crop_image(image, output_size):
     h, w = image.shape[1:]
     new_h, new_w = output_size, output_size
@@ -362,75 +260,5 @@ def center_crop_image(image, output_size):
     image = image[:, top:top + new_h, left:left + new_w]
     return image
 
-class CenterCrop(object):
-    """Center crop the image in a sample.
-
-    Args:
-        output_size (tuple or int): Desired output size. If int, square crop
-            is made.
-    """
-
-    def __init__(self, output_size):
-        assert isinstance(output_size, (int,))
-        self.output_size = (output_size, output_size)
-
-    def __call__(self, image):
-
-        h, w = image.shape[1:]
-        new_h, new_w = self.output_size
-
-        top = (h - new_h)//2
-        left = (w - new_w)//2
-
-        image = image[:, top: top + new_h, left: left + new_w]
-
-        return image
-
-class ToTensor(object):
-    """Convert ndarrays in sample to Tensors."""
-
-    def __call__(self, image,device):
-
-        # torch image: C X H X W
-        
-
-        return torch.from_numpy(image,)
-
-
-class Grayscale(object):
-    """Convert ndarrays in sample to grayscale randomly."""
-
-    def __init__(self, prob):
-        self.prob = prob
-
-    def __call__(self, image):
-
-        if self.prob > np.random.uniform():
-            image = self.rgb2gray(image)
-
-        return image
-
-    def rgb2gray(self, rgb):
-        rgb = np.transpose(rgb, (1, 2, 0))
-        rgb = np.expand_dims(np.dot(rgb[..., :3], [0.2989, 0.5870, 0.1140]), 0)
-        rgb = np.repeat(rgb, 3, 0)
-        return rgb.astype(np.uint8)
-
-
-class Flip(object):
-    """Convert ndarrays in sample to flip randomly."""
-
-    def __init__(self, prob):
-        self.prob = prob
-
-    def __call__(self, image):
-
-        if self.prob > np.random.uniform():
-            image = self.flip(image)
-
-        return image
-
-    def flip(self, img):
-        return np.transpose(img, (0, 2, 1))
 
 

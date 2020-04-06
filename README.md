@@ -1,5 +1,7 @@
 # CURL: Contrastive Unsupervised Representation Learning for Sample-Efficient Reinforcement Learning
 
+This repository is the official implementation of [CURL](https://www.mishalaskin.github.io/curl). 
+
 ## Installation 
 
 All of the dependencies are in the `conda_env.yml` file. They can be installed manually or with the following command:
@@ -31,16 +33,16 @@ In your console, you should see printouts that look like:
 | train | E: 233 | S: 29500 | D: 19.6 s | R: 838.0947 | BR: 3.7254 | A_LOSS: -316.9415 | CR_LOSS: 136.5304 | CU_LOSS: 0.0000
 ```
 
-The maximum score for cartpole swing up is around 845 pts. Notice how CURL solves visual cartpole in 30k steps! This takes about and hour of training depending on your GPU. For reference, the state-state-of-the-art end-to-end method D4PG takes 50,000,000 timesteps to solve the same problem. CURL is ~1000x more efficient!
+The maximum score for cartpole swing up is around 845 pts. Notice how CURL solves visual cartpole in <50k steps! This takes about and hour of training depending on your GPU. For reference, the state-state-of-the-art end-to-end method D4PG takes 50M timesteps to solve the same problem.
 
-The above output decodes as:
+Log abbreviation mapping:
 
 ```
 train - training episode
 E - total number of episodes 
 S - total number of environment steps
 D - duration in seconds to train 1 episode
-R - episode reward
+R - mean episode reward
 BR - average reward of sampled batch
 A_LOSS - average loss of actor
 CR_LOSS - average loss of critic
@@ -53,5 +55,6 @@ All data related to the run is stored in the specified `working_dir`. To enable 
 tensorboard --logdir log --port 6006
 ```
 
-and go to `localhost:6006` in your browser. If you're running headlessly, try port forwarding with ssh.
+and go to `localhost:6006` in your browser. If you're running headlessly, try port forwarding with ssh. 
 
+For GPU accelerated rendering, make sure EGL is installed on your machine and set `export MUJOCO_GL=egl`. For environment troubleshooting issues, see the DeepMind control documentation.

@@ -112,7 +112,6 @@ def evaluate(env, agent, video, num_episodes, L, step, args):
         L.log('eval/' + prefix + 'mean_episode_reward', mean_ep_reward, step)
         L.log('eval/' + prefix + 'best_episode_reward', best_ep_reward, step)
 
-    #run_eval_loop(sample_stochastically=True)
     run_eval_loop(sample_stochastically=False)
     L.dump(step)
 
@@ -260,7 +259,7 @@ def main():
 
         # run training update
         if step >= args.init_steps:
-            num_updates = 1 #args.init_steps if step == args.init_steps else 1
+            num_updates = 1 
             for _ in range(num_updates):
                 agent.update(replay_buffer, L, step)
 
@@ -271,7 +270,6 @@ def main():
             done
         )
         episode_reward += reward
-        #action = np.array([action], dtype="float32") 
         replay_buffer.add(obs, action, reward, next_obs, done_bool)
 
         obs = next_obs

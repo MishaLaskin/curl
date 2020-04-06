@@ -214,9 +214,6 @@ class CURL(nn.Module):
             z_out = z_out.detach()
         return z_out
 
-    #def update_target(self):
-    #    utils.soft_update_params(self.encoder, self.encoder_target, 0.05)
-
     def compute_logits(self, z_a, z_pos):
         """
         Uses logits trick for CURL:
@@ -420,13 +417,6 @@ class CurlSacAgent(object):
 
     def update_cpc(self, obs_anchor, obs_pos, cpc_kwargs, L, step):
         
-        # time flips 
-        """
-        time_pos = cpc_kwargs["time_pos"]
-        time_anchor= cpc_kwargs["time_anchor"]
-        obs_anchor = torch.cat((obs_anchor, time_anchor), 0)
-        obs_pos = torch.cat((obs_anchor, time_pos), 0)
-        """
         z_a = self.CURL.encode(obs_anchor)
         z_pos = self.CURL.encode(obs_pos, ema=True)
         

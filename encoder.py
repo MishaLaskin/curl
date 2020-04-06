@@ -8,7 +8,9 @@ def tie_weights(src, trg):
     trg.bias = src.bias
 
 
+# for 84 x 84 inputs
 OUT_DIM = {2: 39, 4: 35, 6: 31}
+# for 64 x 64 inputs
 OUT_DIM_64 = {2: 29, 4: 25, 6: 21}
 
 
@@ -21,7 +23,7 @@ class PixelEncoder(nn.Module):
         self.obs_shape = obs_shape
         self.feature_dim = feature_dim
         self.num_layers = num_layers
-        # try 2 5x5s with strides 2x2. with samep adding, it should reduce 84 to 21, so with valid, it should be even smaller than 21.
+
         self.convs = nn.ModuleList(
             [nn.Conv2d(obs_shape[0], num_filters, 3, stride=2)]
         )

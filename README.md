@@ -1,6 +1,6 @@
 # CURL: Contrastive Unsupervised Representation Learning for Sample-Efficient Reinforcement Learning
 
-This repository is the official implementation of [CURL](https://www.mishalaskin.github.io/curl). 
+This repository is the official implementation of [CURL](https://mishalaskin.github.io/). 
 
 ## Installation 
 

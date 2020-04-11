@@ -1,6 +1,6 @@
 # CURL: Contrastive Unsupervised Representation Learning for Sample-Efficient Reinforcement Learning
 
-This repository is the official implementation of [CURL](https://mishalaskin.github.io/curl/). Our implementation of SAC is based on [SAC+AE])https://github.com/denisyarats/pytorch_sac_ae) by Denis Yarats. 
+This repository is the official implementation of [CURL](https://mishalaskin.github.io/curl/). Our implementation of SAC is based on [SAC+AE](https://github.com/denisyarats/pytorch_sac_ae) by Denis Yarats. 
 
 ## Installation 
 

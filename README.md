@@ -33,7 +33,7 @@ In your console, you should see printouts that look like:
 | train | E: 233 | S: 29500 | D: 19.6 s | R: 838.0947 | BR: 3.7254 | A_LOSS: -316.9415 | CR_LOSS: 136.5304 | CU_LOSS: 0.0000
 ```
 
-The maximum score for cartpole swing up is around 845 pts. Notice how CURL solves visual cartpole in <50k steps! This takes about and hour of training depending on your GPU. For reference, the state-state-of-the-art end-to-end method D4PG takes 50M timesteps to solve the same problem.
+For reference, the maximum score for cartpole swing up is around 845 pts, so CURL has converged to the optimal score. This takes about and hour of training depending on your GPU. 
 
 Log abbreviation mapping:
 
